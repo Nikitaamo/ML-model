@@ -1,8 +1,13 @@
+import ssl
+import numpy as np
 from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+
+# Skip SSL certificate verification (use with caution)
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def load_data():
     """Load the California housing dataset."""
@@ -17,9 +22,9 @@ def preprocess_data(X, y):
 
 def train_model(X_train, y_train):
     """Train the model using RandomForestRegressor and GridSearchCV for hyperparameter tuning."""
-    model = RandomForestRegressor(n_estimators=100, random_state=42)
-    parameters = {'n_estimators': [100, 200], 'max_depth': [10, 20, 30]}
-    clf = GridSearchCV(model, parameters, cv=5)
+    model = RandomForestRegressor(random_state=42, n_jobs=-1)
+    parameters = {'n_estimators': [50, 100], 'max_depth': [10, 20]}
+    clf = GridSearchCV(model, parameters, cv=3, n_jobs=-1)
     clf.fit(X_train, y_train)
     print(f"Best parameters: {clf.best_params_}")
     return clf.best_estimator_
@@ -33,10 +38,12 @@ def evaluate_model(model, X_test, y_test):
 def visualize_predictions(y_test, predictions):
     """Visualize the actual vs predicted values."""
     plt.figure(figsize=(10, 6))
-    plt.scatter(y_test, predictions, alpha=0.5)
-    plt.xlabel("Actual Prices")
-    plt.ylabel("Predicted Prices")
+    plt.scatter(y_test, predictions, alpha=0.5, c='r', label='Predicted Prices')
+    plt.scatter(y_test, y_test, alpha=0.5, c='b', label='Actual Prices')
+    plt.xlabel("Actual Prices (100k USD)")
+    plt.ylabel("Predicted Prices (100k USD)")
     plt.title("Actual vs Predicted Housing Prices")
+    plt.legend()
     plt.show()
 
 def main():
@@ -46,3 +53,6 @@ def main():
     predictions = model.predict(X_test)
     evaluate_model(model, X_test, y_test)
     visualize_predictions(y_test, predictions)
+
+if __name__ == "__main__":
+    main()
