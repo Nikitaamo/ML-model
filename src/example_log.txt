@@ -1,0 +1,13 @@
+### Model Training Without PCA ###
+Starting model training...
+Not using PCA.
+Chosen parameters aim to balance model complexity and overfitting risk.
+Without PCA - Best parameters: {'max_depth': 20, 'n_estimators': 100}
+Mean Squared Error: 0.2562535931124907
+
+### Model Training With PCA ###
+Starting model training...
+Using PCA with n_components=8
+Chosen parameters aim to balance model complexity and overfitting risk.
+With PCA - Best parameters: {'regressor__max_depth': 20, 'regressor__n_estimators': 100}
+Mean Squared Error: 0.33765667872899197
